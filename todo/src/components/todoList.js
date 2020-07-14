@@ -1,6 +1,6 @@
 import React, { useState, useReducer } from 'react';
 
-import { initialState, reducer } from '../reducers/reducer';
+import { reducer, initialState } from '../reducers/reducer';
 
 const TodoList = () => {
 
@@ -14,15 +14,28 @@ const TodoList = () => {
 
     const submitItem = e => {
         e.preventDefault();
-        dispatch({item: ''});
-        setNewItem(e, newItem);
+        dispatch({ type: "ADD_TODO", payload: newItem})
+        setNewItem('');
+    }
+
+    const  handleToggle = id => {
+        dispatch({
+            type: "COMPLETED_TASK",
+            payload:id})
+    }
+
+    const clearCompleted = e => {
+        e.preventDefault();
+        dispatch({
+            type: "CLEAR_COMPLETED"
+        })
     }
 
     return(
         <div>
-            <h1>{state.item}</h1>
+            
             <div>
-                <form onSubmit={submitItem}>
+                <form>
                     <input 
                         type="text"
                         name="newItem"
@@ -30,14 +43,17 @@ const TodoList = () => {
                         onChange={handleChanges}
                     />
 
-                    <button
-                        onClick ={() => 
-                            dispatch({ type: "ADD_TODO", payload: newItem})
-                        }
-                    >Add Item</button>
-                    <p>{newItem}</p>
+                    <button onClick={submitItem}>Add Item</button>
+                    <button onClick={clearCompleted}>Clear Completed</button>
                 </form>
                 
+                
+            </div>
+
+            <div>
+                {state.map(obj => (
+                    <div key={obj.id} onClick={() =>handleToggle(obj.id)} className={`task${obj.completed ? ' complete' : ''}`}>{obj.item}</div>
+                ))}
             </div>
         </div>
     )
